@@ -1,0 +1,11 @@
+Stock,Sector,PriceStart,PriceEnd,Return
+AAPL,Technology,120.5,175.2,45.39
+MSFT,Technology,210.1,280.5,33.51
+WMT,Consumer Staples,140.0,150.0,7.14
+TSLA,Automotive,600.0,880.0,46.67
+JPM,Financials,95.0,105.0,10.53
+BABA,Consumer Discretionary,180.0,160.0,-11.11
+RELIANCE,Energy,2200.0,2400.0,9.09
+TCS,Technology,3100.0,3500.0,12.9
+HDFC,Financials,1500.0,1650.0,10.0
+BAJAJ-AUTO,Automotive,4800.0,5200.0,8.33
