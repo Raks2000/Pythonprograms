@@ -62,13 +62,14 @@ def aggregate_by_sector(results):
 
 def print_report(results, sector_summary):
     print("\n==== All Stock Details ====")
-    print(f"{'Stock':<12} {'Sector':<20} {'Start':<10} {'End':<10} {'Return(%)':<10}")
+    print(f"{'Stock':<12} {'Sector':<30} {'Start':<10} {'End':<10} {'Return(%)':<10}")
     print("-" * 65)
     for r in results:
-        print(f"{r['Stock']:<12} {r['Sector']:<20} {r['PriceStart']:<10.2f} {r['PriceEnd']:<10.2f} {r['Return']:<10.2f}")
+        print(f"{r['Stock']:<12} {r['Sector']:<30} {r['PriceStart']:<10.2f} {r['PriceEnd']:<10.2f} {r['Return']:<10.2f}")
 
     sorted_results = sorted(results, key=lambda x: x['Return'], reverse=True)
     print("\n==== Top 5 Stocks by Return ====")
+    #print(f"{'Stock':<12} {'Sector':<20} {'Return(%)':<10}")
     for r in sorted_results[:5]:
         print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%")
 
@@ -100,7 +101,8 @@ def export_csv(results, filename):
 
 
 def main():
-    filepath = "stocks_sample.csv"  # Auto-loads CSV file in same folder
+    #filepath = "stocks_sample.csv"  # Auto-loads CSV file in same folder
+    filepath = "stocks_30rows_4cols.csv"  # Auto-loads CSV file in same folder
     print(f"Loading data from: {filepath}\n")
 
     rows = read_csv_safe(filepath)
