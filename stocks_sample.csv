@@ -1,0 +1,11 @@
+Stock,Sector,PriceStart,PriceEnd
+AAPL,Technology,150,175
+MSFT,Technology,250,300
+GOOGL,Communication Services,2700,2800
+AMZN,Consumer Discretionary,3300,3400
+TSLA,Consumer Discretionary,700,800
+JPM,Financials,160,165
+BAC,Financials,40,42
+WFC,Financials,45,44
+XOM,Energy,60,65
+CVX,Energy,100,105

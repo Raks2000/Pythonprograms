@@ -1,0 +1,31 @@
+Stock,Sector,PriceStart,PriceEnd,Return
+AAPL,Consumer Staples,475.85,497.93,4.64
+MSFT,Energy,302.46,299.18,-1.08
+GOOGL,Consumer Discretionary,235.03,227.21,-3.33
+AMZN,Consumer Discretionary,20.09,21.98,9.41
+META,Consumer Staples,469.89,422.97,-9.99
+TSLA,Consumer Staples,99.87,95.96,-3.92
+NVDA,Healthcare,13.46,12.18,-9.51
+NFLX,Consumer Discretionary,309.81,287.47,-7.21
+BABA,Consumer Staples,487.14,461.1,-5.35
+ORCL,Healthcare,394.74,371.03,-6.01
+TCS.NS,Consumer Staples,300.28,273.04,-9.07
+INFY.NS,Consumer Discretionary,343.35,339.95,-0.99
+RELIANCE.NS,Financials,474.95,519.18,9.31
+HDFCBANK.NS,Financials,198.85,179.6,-9.68
+ICICIBANK.NS,Financials,345.27,341.14,-1.2
+ITC.NS,Consumer Staples,252.64,229.11,-9.31
+JPM,Healthcare,201.62,188.81,-6.35
+BAC,Consumer Staples,162.74,163.39,0.4
+WMT,Financials,288.17,261.16,-9.37
+KO,Financials,389.82,424.09,8.79
+PEP,Healthcare,464.06,485.15,4.54
+XOM,Healthcare,106.03,96.39,-9.09
+CVX,Energy,200.45,191.28,-4.57
+PFE,Energy,297.51,325.19,9.3
+MRK,Consumer Staples,275.92,256.1,-7.18
+DIS,Energy,46.53,51.06,9.74
+ADBE,Technology,107.37,96.75,-9.89
+CRM,Consumer Discretionary,107.43,111.97,4.23
+INTC,Consumer Discretionary,387.92,354.87,-8.52
+AMD,Financials,66.78,71.63,7.26
