@@ -86,7 +86,7 @@ def print_report(results, summary): #printing the final report
     sorted_results = sorted(results, key=lambda x: x['Return'], reverse=True) #sorting stocks by return in descending order
     
     for r in sorted_results[:5]: #printing top 5 performing stocks
-        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%") #printing stock name, sector and return percentage
+        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%") #printing data of stock, sector and return percentage
 
     print("\n==== Sector Summary ====")
     print(f"{'Sector':<25} {'Avg Return(%)':<15} {'Count':<10}") #printing sector summary header
