@@ -13,30 +13,29 @@ def read_csv_file(filepath): #function to read CSV file
                     return [] #returning empty list
 
             for row in reader: # Looping through each row
-                print("\nNew Row Read From CSV:") # Indicates a new row is being processed
-                print(row)  # it will print the full data in the form of dictionary
-                # Geting each column value
-                stock = row['Stock'] 
-                sector = row['Sector'] 
-                price_start = float(row['PriceStart'])
-                price_end = float(row['PriceEnd'])
-
-                if price_start > 0 and price_end > 0: # checking for positive prices
-                    # Adding this stock to the list
-                    stocks.append({
-                        "Stock": stock,
-                        "Sector": sector,
-                        "PriceStart": price_start,
-                        "PriceEnd": price_end
+                 print(row)
+                 try:
+                    stock = row['Stock'] #extracting stock name
+                    sector = row['Sector'] #extracting sector name
+                    price_start = float(row['PriceStart']) #extracting starting price
+                    price_end = float(row['PriceEnd']) #extracting ending price
+                    if price_start <= 0 or price_end <= 0: #checking for non-positive prices
+                        print(f"Skipping invalid row (non-positive price): {row}") # skipping invalid row message
+                        continue
+                    stocks.append({ #appending valid stock data to the list
+                        "Stock": stock, #stock name
+                        "Sector": sector, #sector name
+                        "PriceStart": price_start, #starting price
+                        "PriceEnd": price_end #ending price
                     })
-                else:
-                    print("Skipping row with non-positive price:", row)
-                    
+                 except ValueError: #handling value errors during conversion to float
+                    print(f"Skipping invalid row (non-numeric price): {row}") # skipping invalid row message
+                    continue
     except FileNotFoundError: #handling file not found error
-        print(f"Error: The file {filepath} was not found.")
-    except Exception as e: #handling any other unexpected exceptions
-        print(f"An error occurred: {e}")
-    return stocks  # Returnimg the final list of stocks
+        print(f"Error: File '{filepath}' not found.")
+    except Exception as e: #handling any other exceptions
+        print(f"Unexpected error while reading file: {e}")
+    return stocks
 
 
 def compute_return(row): #function to compute return percentage
@@ -75,7 +74,6 @@ def aggregate_by_sector(results): #function to aggregate data by sector
     return summary # return the summary back
 
 def print_report(results, summary): #printing the final report
-    print("Individual Stock Returns:") #printing header for individual stock returns
     print("\n==== All Stock Details ====") #printing header for all stock details
     print(f"{'Stock':<12} {'Sector':<20} {'Start':<10} {'End':<10} {'Return(%)':<10}") #printing table header
 
@@ -86,7 +84,7 @@ def print_report(results, summary): #printing the final report
     sorted_results = sorted(results, key=lambda x: x['Return'], reverse=True) #sorting stocks by return in descending order
     
     for r in sorted_results[:5]: #printing top 5 performing stocks
-        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%") #printing stock name, sector and return percentage
+        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%") #printing data of stock, sector and return percentage
 
     print("\n==== Sector Summary ====")
     print(f"{'Sector':<25} {'Avg Return(%)':<15} {'Count':<10}") #printing sector summary header
@@ -115,7 +113,7 @@ def export_results_to_csv(results, output_filepath): #function to export results
         print(f"An error occurred while exporting to CSV: {e}")
 
 def main():
-    filepath = "stocks_30rows_4cols.csv" #path to the CSV file
+    filepath = "stock_returns.csv"
     print(f"Loading data from: {filepath}\n") #printing the file path
 
     rows = read_csv_file(filepath) #reading the CSV file
