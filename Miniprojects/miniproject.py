@@ -1,130 +1,146 @@
 import csv
 
-def read_csv_file(filepath): #function to read CSV file
-    stocks = []  # Empty list to store stock data
+def read_csv_safe(filepath):
+    # read stock data from a CSV file and validate input
+    stocks = []
     try:
-        with open(filepath, 'r') as file: # Open the file in read mode
-            reader = csv.DictReader(file)  # Read file line by line as dictionary
+        with open(filepath, 'r') as file:
+            reader = csv.DictReader(file)
 
             required = ['Stock', 'Sector', 'PriceStart', 'PriceEnd']
-            for col in required: #checking for required columns
-                if col not in reader.fieldnames: # checking if any required column is missing
-                    print(f" Missing required column: '{col}' — skipping analysis.") #printing missing column message
-                    return [] #returning empty list
+            # Validate required columns
+            for col in required:
+                if col not in reader.fieldnames:
+                    print(f"Missing required column: '{col}' — skipping analysis.")
+                    return []
 
-            for row in reader: # Looping through each row
-                 print(row)
-                 try:
-                    stock = row['Stock'] #extracting stock name
-                    sector = row['Sector'] #extracting sector name
-                    price_start = float(row['PriceStart']) #extracting starting price
-                    price_end = float(row['PriceEnd']) #extracting ending price
-                    if price_start <= 0 or price_end <= 0: #checking for non-positive prices
-                        print(f"Skipping invalid row (non-positive price): {row}") # skipping invalid row message
+            # Process each row and validate data
+            for row in reader:
+                try:
+                    stock = row['Stock'].strip()
+                    sector = row['Sector'].strip()
+                    price_start = float(row['PriceStart'])
+                    price_end = float(row['PriceEnd'])
+
+                    if price_start <= 0 or price_end <= 0:
+                        print(f"Skipping invalid row (non-positive price): {row}")
                         continue
-                    stocks.append({ #appending valid stock data to the list
-                        "Stock": stock, #stock name
-                        "Sector": sector, #sector name
-                        "PriceStart": price_start, #starting price
-                        "PriceEnd": price_end #ending price
+
+                    stocks.append({
+                        "Stock": stock,
+                        "Sector": sector,
+                        "PriceStart": price_start,
+                        "PriceEnd": price_end
                     })
-                 except ValueError: #handling value errors during conversion to float
-                    print(f"Skipping invalid row (non-numeric price): {row}") # skipping invalid row message
+                except ValueError:
+                    print(f"Skipping invalid row (non-numeric price): {row}")
                     continue
-    except FileNotFoundError: #handling file not found error
+    except FileNotFoundError:
         print(f"Error: File '{filepath}' not found.")
-    except Exception as e: #handling any other exceptions
+    except Exception as e:
         print(f"Unexpected error while reading file: {e}")
+
     return stocks
 
 
-def compute_return(row): #function to compute return percentage
-    price_start = row['PriceStart'] #extracting starting price
-    price_end = row['PriceEnd'] #extracting ending price
-    return round(((price_end - price_start) / price_start) * 100, 2) #calculating return percentage and rounding to 2 decimal places
+def compute_return(row):
+    # """Compute percentage return for a single stock."""
+    price_start = row['PriceStart']
+    price_end = row['PriceEnd']
+    return round(((price_end - price_start) / price_start) * 100, 2)
 
-def process_all(rows): #function to process all stock data
-    results = [] #initializing empty list to store results
-    for r in rows: #looping through each row
-        r['Return'] = compute_return(r) #computing return for each stock
-        results.append(r) #appending processed stock data to results list
-    return results #returning the results list
 
-def aggregate_by_sector(results): #function to aggregate data by sector
-    summary = {} # Empty dictionary to store each sector’s data
-    for item in results: # Go through each stock record one by one
-        sector = item['Sector'] # Get the sector name
-        ret = item['Return'] # Get the return value
+def process_all(rows):
+    # """Compute returns for all valid stocks."""
+    results = []
+    for r in rows:
+        r['Return'] = compute_return(r)
+        results.append(r)
+    return results
 
-        if sector not in summary: # checking if this sector is not yet in the summary
-            summary[sector] = { 
-                'total': 0, # Total return for this sector
-                'count': 0, # Number of stocks in this sector
-                'avg_return': 0  # Added this field
-            }
 
-        summary[sector]['total'] += ret # Add this stock’s return to total
-        summary[sector]['count'] += 1 # Increase the count by 1
+def aggregate_by_sector(results):
+    # """Aggregate stock returns by sector and compute average returns."""
+    summary = {}
+    for item in results:
+        sector = item['Sector']
+        ret = item['Return']
 
-    for sector in summary: # Now calculate average return for each sector
-        total = summary[sector]['total'] # Get total return
-        count = summary[sector]['count'] # Get count of stocks
-        summary[sector]['avg_return'] = round(total / count, 2) # Calculate and round average return and updates avreage return
+        if sector not in summary:
+            summary[sector] = {'total': 0, 'count': 0, 'avg_return': 0}
 
-    return summary # return the summary back
+        summary[sector]['total'] += ret
+        summary[sector]['count'] += 1
 
-def print_report(results, summary): #printing the final report
-    print("\n==== All Stock Details ====") #printing header for all stock details
-    print(f"{'Stock':<12} {'Sector':<20} {'Start':<10} {'End':<10} {'Return(%)':<10}") #printing table header
+    # Compute average returns
+    for sector in summary:
+        total = summary[sector]['total']
+        count = summary[sector]['count']
+        summary[sector]['avg_return'] = round(total / count, 2)
 
-    for r in results: #looping through each processed stock data
-        print(f"{r['Stock']:<12} {r['Sector']:<20} {r['PriceStart']:<10.2f} {r['PriceEnd']:<10.2f} {r['Return']:<10.2f}") #printing all the details
-    
+    return summary
+
+
+def print_report(results, summary):
+    # Display full stock report and sector-wise summary
+    print("\n==== All Stock Details ====")
+    print(f"{'Stock':<12} {'Sector':<20} {'Start':<10} {'End':<10} {'Return(%)':<10}")
+
+    for r in results:
+        print(f"{r['Stock']:<12} {r['Sector']:<20} {r['PriceStart']:<10.2f} "
+              f"{r['PriceEnd']:<10.2f} {r['Return']:<10.2f}")
+
+    # Top 5 performing stocks
     print("\n==== Top 5 Performing Stocks ====")
-    sorted_results = sorted(results, key=lambda x: x['Return'], reverse=True) #sorting stocks by return in descending order
-    
-    for r in sorted_results[:5]: #printing top 5 performing stocks
-        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%") #printing data of stock, sector and return percentage
+    sorted_results = sorted(results, key=lambda x: x['Return'], reverse=True)
+    for r in sorted_results[:5]:
+        print(f"{r['Stock']} ({r['Sector']}) - {r['Return']}%")
 
+    # Sector summary
     print("\n==== Sector Summary ====")
-    print(f"{'Sector':<25} {'Avg Return(%)':<15} {'Count':<10}") #printing sector summary header
-    best_sector = None #
-    best_return = -float('inf') # Initialize best return to negative infinity(the smallest possible number in Python.)
+    print(f"{'Sector':<25} {'Avg Return(%)':<15} {'Count':<10}")
 
-    for sector, data in summary.items(): #looping through each sector summary
-        print(f"{sector:<25} {data['avg_return']:<15.2f} {data['count']:<10}") #printing data of sector name, average return and count of stocks
-        if data['avg_return'] > best_return: #checking for best performing sector
-            best_return = data['avg_return'] #updating best return
-            best_sector = sector #updating best sector
+    best_sector, best_return = None, -float('inf')
+    for sector, data in summary.items():
+        print(f"{sector:<25} {data['avg_return']:<15.2f} {data['count']:<10}")
+        if data['avg_return'] > best_return:
+            best_sector, best_return = sector, data['avg_return']
 
-    print(f"\nBest Performing Sector: {best_sector} ({best_return}%)") #printing best performing sector
+    print(f"\nBest Performing Sector: {best_sector} ({best_return}%)")
 
-def export_results_to_csv(results, output_filepath): #function to export results to CSV file
+
+def export_csv(results, output_filepath):
+    # Export processed stock data to a CSV file.
     try:
-        with open(output_filepath, 'w', newline='') as file: # Open the file in write mode
-            fieldnames = ['Stock', 'Sector', 'PriceStart', 'PriceEnd', 'Return'] # Define the CSV column headers
-            writer = csv.DictWriter(file, fieldnames=fieldnames) # Create a DictWriter object
-
-            writer.writeheader() # Write the header row
-            for r in results: # Loop through each processed stock data
-                writer.writerow(r) # Write each stock's data as a row in the CSV file
-        print(f"Results successfully exported to {output_filepath}") # Indicate successful export
-    except Exception as e: #handling any exceptions during file writing
+        with open(output_filepath, 'w', newline='') as file:
+            fieldnames = ['Stock', 'Sector', 'PriceStart', 'PriceEnd', 'Return']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(results)
+        print(f"Results successfully exported to {output_filepath}")
+    except Exception as e:
         print(f"An error occurred while exporting to CSV: {e}")
 
+
 def main():
-    filepath = "stock_returns.csv"
-    print(f"Loading data from: {filepath}\n") #printing the file path
+    #Main program
+    filepath = input("Enter path to CSV file (e.g., stocks_sample.csv): ").strip()
+    print(f"Loading data from: {filepath}\n")
 
-    rows = read_csv_file(filepath) #reading the CSV file
-    if not rows: # checking if no valid data is returned
+    rows = read_csv_safe(filepath)
+    if not rows:
         print("No valid data to process. Exiting.")
-        #return
+        return
 
-    results = process_all(rows) #processing all stock data
-    summary = aggregate_by_sector(results) #aggregating data by sector
-    print_report(results, summary) #printing the final report
-    export_results_to_csv(results, "stocks_30rows_4cols.csv") #exporting results to CSV file
+    results = process_all(rows)
+    summary = aggregate_by_sector(results)
+    print_report(results, summary)
+
+    choice = input("\nDo you want to export the results to CSV? (y/n): ").strip().lower()
+    if choice == 'y':
+        output_filepath = input("Enter output CSV file path (e.g., output.csv): ").strip()
+        export_csv(results, output_filepath)
+
 
 if __name__ == "__main__":
     main()
